@@ -1,0 +1,41 @@
+{% extends 'base_generic.html' %}
+<header class="header-area">
+    {% block navbar %}
+        {% include 'base_nav.html' %}
+    {% endblock %}
+</header>
+{% block pagina_titulo %}
+    <p>See what’s new</p>
+    <h2>Todas las Categorías</h2>
+{% endblock %}
+{% block content %}
+    <div class="container">
+        <br>
+    <div class="single-artists d-flex justify-content-center align-items-center wow fadeInUp mt-0 mb-15 m-auto" data-wow-delay="100ms">
+        <a href="{% url 'categories' %}" class="btn oneMusic-btn mt-30">Ver todas las Categorías </a>
+        <a href="{% url 'category_create' %}" class="btn oneMusic-btn mt-30">Crear Categoría </a>
+    </div>
+  <table class="table text-center">
+      <thead class="thead-dark">
+          <tr>
+              <th>Nombre</th>
+              <th>Ver</th>
+              <th>Editar</th>
+              <th>Eliminar</th>
+          </tr>
+      </thead>
+      <tbody>
+      {% if category_list %}
+          {% for category in category_list %}
+              <tr>
+                <td>{{ category }}</td>
+                <td><a href="{{ category.get_absolute_url }}">Click</a></td>
+                  <td><a href="{{ category.get_absolute_url }}/update">Editar</a></td>
+                 <td><a href="{{ category.get_absolute_url }}/delete">X</a></td>
+              </tr>
+          {% endfor %}
+      {% endif %}
+      </tbody>
+  </table>
+</div>
+{% endblock %}

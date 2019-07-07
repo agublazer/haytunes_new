@@ -1,0 +1,47 @@
+{% extends 'base_generic.html' %}
+<header class="header-area">
+    {% block navbar %}
+        {% include 'base_nav.html' %}
+    {% endblock %}
+</header>
+{% block pagina_titulo %}
+    <p>See what’s new</p>
+    <h2>Categoría: {{ category }}</h2>
+{% endblock %}
+{% block content %}
+    <div class="container">
+        <br>
+    <div class="single-artists d-flex justify-content-center align-items-center wow fadeInUp mt-0 mb-15 m-auto" data-wow-delay="100ms">
+        <a href="{% url 'product_create' %}" class="btn oneMusic-btn mt-30">Ingresar Nuevo Producto</a>
+        <a href="{% url 'categories' %}" class="btn oneMusic-btn mt-30">Ver todas las Categorías </a>
+        <a href="{% url 'category_create' %}" class="btn oneMusic-btn mt-30">Crear Categoría </a>
+    </div>
+  <table class="table text-center">
+      <thead class="thead-dark">
+          <tr>
+              <th>Titulo</th>
+              <th>Tipo</th>
+              <th>Categoría</th>
+              <th>Código</th>
+              <th>Ver</th>
+              <th>Eliminar</th>
+          </tr>
+      </thead>
+      <tbody>
+          {% for product in category.product_set.all %}
+              <tr>
+                <td>{{ product.title }}</td>
+                <td>{{ product.get_type_display }}</td>
+                <td>{{ product.category }}</td>
+                <td>{{ product.id }}</td>
+                <td><a href="{{ product.get_absolute_url }}">Click</a></td>
+                 <td><a href="{{ product.get_absolute_url }}/delete">X</a></td>
+              </tr>
+          {% endfor %}
+      </tbody>
+  </table>
+    <div class="single-artists d-flex justify-content-center align-items-center wow fadeInUp mt-0 mb-15 m-auto" data-wow-delay="100ms">
+        <a href="{% url 'categories' %}" class="btn oneMusic-btn mt-30">Regresar </a>
+    </div>
+</div>
+{% endblock %}

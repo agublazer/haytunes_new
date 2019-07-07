@@ -1,0 +1,34 @@
+{% extends 'base_generic.html' %}
+<header class="header-area">
+    {% block navbar %}
+        {% include 'base_nav.html' %}
+    {% endblock %}
+</header>
+{% block pagina_titulo %}
+    <p>See what’s new</p>
+    <h2>Actualizar Perfil</h2>
+{% endblock %}
+{% block content %}
+    <div class="container">
+        <br>
+        <br>
+        <form action="" method="post" enctype="multipart/form-data" class="text-center">
+        {% csrf_token %}
+        <table class="table text-center">
+            <thead class="thead-dark">
+          <tr>
+              <th></th>
+              <th></th>
+
+          </tr>
+      </thead>
+            {{ user_form.as_table }}
+        </table>
+        <input type="submit" value="Submit" class="btn oneMusic-btn mt-30">
+        </form>
+    <div class="single-artists d-flex justify-content-center align-items-center wow fadeInUp mt-0 mb-15 m-auto" data-wow-delay="100ms">
+        <a href="{% url 'profile' %}" class="btn oneMusic-btn mt-30">Regresar </a>
+    </div>
+    </div>
+    <hr>
+{% endblock %}

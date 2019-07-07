@@ -1,0 +1,49 @@
+{% extends 'base_generic.html' %}
+<header class="header-area">
+    {% block navbar %}
+        {% include 'base_nav.html' %}
+    {% endblock %}
+</header>
+{% block pagina_titulo %}
+    <h2>Buscar Cliente</h2>
+{% endblock %}
+{% block content %}
+    <div class="container">
+        <br>
+    {% if user.is_authenticated %}
+        <h2>{{ user.get_full_name }}</h2>
+    <div class="single-artists d-flex justify-content-center align-items-center wow fadeInUp mt-0 mb-15 m-auto" data-wow-delay="100ms">
+        <form action="" method="post">
+          <input type="text" name="search_text"><br>
+          <input type="radio" name="search_type" value="name" checked> Nombre de usuario
+          <input type="radio" name="search_type" value="code"> Código <br>
+          {% csrf_token %}
+          <input type="submit" value="Buscar" class="btn oneMusic-btn mt-30">
+    </form>
+    </div>
+        <table class="table text-center">
+      <thead class="thead-dark">
+          <tr>
+              <th>Username</th>
+              <th>Código</th>
+              <th>Saldo</th>
+          </tr>
+      </thead>
+      <tbody>
+            {% if clients %}
+              {% for client in clients %}
+              <tr>
+                <td><a href="{% url 'client-detail' id=client.id  %}">{{ client.user}}</a></td>
+                <td>{{ client.id }}</td>
+                <td>{{ client.credit }}</td>
+              </tr>
+              {% endfor %}
+            {% endif %}
+      </tbody>
+  </table>
+    {% else %}
+        <p>Please login to see this page.</p>
+    {% endif %}
+    
+</div>
+{% endblock %}

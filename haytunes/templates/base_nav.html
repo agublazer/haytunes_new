@@ -1,0 +1,65 @@
+{% load static %}
+<div class="oneMusic-main-menu">
+            <div class="classy-nav-container breakpoint-off">
+                <div class="container">
+                    <!-- Menu -->
+                    <nav class="classy-navbar justify-content-between" id="oneMusicNav">
+
+                        <!-- Nav brand -->
+                        <a href="{% url 'index' %}" class="nav-brand"><img src="{% static 'img/core-img/logo.png' %}" alt=""></a>
+
+                        <!-- Navbar Toggler -->
+                        <div class="classy-navbar-toggler">
+                            <span class="navbarToggler"><span></span><span></span><span></span></span>
+                        </div>
+
+                        <!-- Menu -->
+                        <div class="classy-menu">
+
+                            <!-- Close Button -->
+                            <div class="classycloseIcon">
+                                <div class="cross-wrap"><span class="top"></span><span class="bottom"></span></div>
+                            </div>
+
+                            <!-- Nav Start -->
+                            <div class="classynav">
+                                <ul>
+                                    <li><a>Saldo: {{credits}}</a></li>
+                                    <li><a href="{% url 'index' %}">Home</a></li>
+                                    <li><a href="{% url 'search_client' %}">Buscar Cliente</a></li>
+                                    <li><a href="{% url 'products' %}">Buscar Producto</a></li>
+                                    <li><input type="search"></li>
+                                </ul>
+
+                                <!-- Login/Register & Cart Button -->
+                                <div class="login-register-cart-button d-flex align-items-center">
+                                    <!-- Login/Register -->
+                                    {% if user.is_authenticated %}
+                                        <div class="login-register-btn mr-50">
+                                            <a id="loginBtn" href="{% url 'profile' %}">Perfil</a>
+                                        </div>
+                                        <div class="login-register-btn mr-50">
+                                            <a id="logoutBtn" href="{% url 'logout' %}?next={{ request.path }}">Logout</a>
+                                        </div>
+                                    {% else %}
+                                        <div class="login-register-btn mr-50">
+                                            <a id="loginBtn" href="{% url 'login' %}?next={{ request.path }}">Login</a>
+                                        </div>
+                                        <div class="login-register-btn mr-50">
+                                            <a id="signupBtn" href="{% url 'signup' %}">Register</a>
+                                        </div>
+                                    {% endif %}
+
+                                    <!-- Cart Button -->
+                                    <div class="cart-btn">
+                                        <p><span class="icon-shopping-cart"></span> <span class="quantity">1</span></p>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- Nav End -->
+
+                        </div>
+                    </nav>
+                </div>
+            </div>
+</div>

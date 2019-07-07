@@ -1,0 +1,49 @@
+{% extends 'base_generic.html' %}
+<header class="header-area">
+    {% block navbar %}
+        {% include 'base_nav.html' %}
+    {% endblock %}
+</header>
+{% block pagina_titulo %}
+    <p>See what’s new</p>
+    <h2>Perfil</h2>
+{% endblock %}
+{% block content %}
+    <div class="container">
+        <br>
+    {% if user.is_authenticated %}
+        <h2>{{ user.get_full_name }}</h2>
+        <table class="table text-center">
+      <thead class="thead-dark">
+          <tr>
+              <th>Username</th>
+              <th>Código</th>
+              <th>Saldo</th>
+          </tr>
+      </thead>
+      <tbody>
+              <tr>
+                <td>{{ user.username }}</td>
+                <td>{{ user.id }}</td>
+                <td>{{ user.profile.credit }}</td>
+                <td>{{ product.id }}</td>
+              </tr>
+      </tbody>
+  </table>
+    {% else %}
+        <p>Please login to see this page.</p>
+    {% endif %}
+
+    <div class="single-artists d-flex justify-content-center align-items-center wow fadeInUp mt-0 mb-15 m-auto" data-wow-delay="100ms">
+        <a href="{% url 'index' %}" class="btn oneMusic-btn mt-30">Regresar </a>
+        <a href="{% url 'update_profile' %}" class="btn oneMusic-btn mt-30">Actualizar Datos</a>
+        {% if user.is_superuser%}
+        <a href="{% url 'add_credits' %}" class="btn oneMusic-btn mt-30">Cargar Dinero</a>
+        <a href="{% url 'create_discount' %}" class="btn oneMusic-btn mt-30">Crear Descuento</a>
+        <a href="{% url 'view_list' %}" class="btn oneMusic-btn mt-30">Ver Listado</a>
+        {% endif %}
+    </div>
+    
+
+</div>
+{% endblock %}

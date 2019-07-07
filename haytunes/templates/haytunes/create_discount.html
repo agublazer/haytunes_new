@@ -1,0 +1,79 @@
+{% extends 'base_generic.html' %}
+<header class="header-area">
+    {% block navbar %}
+        {% include 'base_nav.html' %}
+    {% endblock %}
+</header>
+{% block pagina_titulo %}
+    <h2>Crear Descuento</h2>
+{% endblock %}
+{% block content %}
+    <div class="container">
+        <br>
+    {% if user.is_authenticated %}
+    <div class="single-artists d-flex justify-content-center align-items-center wow fadeInUp mt-0 mb-15 m-auto" data-wow-delay="100ms">
+        <form action="" method="post" onsubmit="return(validate())" name="createDiscountForm">
+          Categoría:
+          <select name="category">
+          {% for category in categories%}
+          <option value="{{category}}">{{category}}</option>
+          {% endfor %}
+          </select> <br>
+          Fecha de inicio:<input type="date" name="start_date" required> <br>
+          Fecha de fin: <input type="date" name="end_date" required> <br>
+          Porcentaje: <input type="number" name="percentage" min="10" max="90" step="5" value="20" required> <br>
+          {% csrf_token %}
+          <input type="submit" value="Buscar" class="btn oneMusic-btn mt-30" name="create_discount">
+    </form>
+    </div>
+        <table class="table text-center">
+      <thead class="thead-dark">
+          <tr>
+              <th>Categoría de producto</th>
+              <th>Porcentaje</th>
+              <th>Fecha inicio</th>
+              <th>Fecha fin</th>
+          </tr>
+      </thead>
+      <tbody>
+            {% if active_discounts %}
+              {% for discount in active_discounts %}
+              <tr>
+                <td>{{ discount.product_category}}</a></td>
+                <td>{{ discount.percentage }}</td>
+                <td>{{ discount.start_date }}</td>
+                <td>{{ discount.end_date }}</td>
+              </tr>
+              {% endfor %}
+            {% endif %}
+      </tbody>
+  </table>
+    {% else %}
+        <p>Please login to see this page.</p>
+    {% endif %}
+    
+</div>
+<script type="text/javascript">
+      // set default values to today
+      document.createDiscountForm.start_date.value = today();
+      document.createDiscountForm.start_date.min = today();
+      document.createDiscountForm.end_date.value = today();
+      document.createDiscountForm.end_date.min = today();
+      function validate() {
+        if( document.createDiscountForm.start_date.value >  document.createDiscountForm.end_date.value) {
+          alert("Fecha de inicio no puede ser mayor a fecha de fin" );
+          document.createDiscountForm.start_date.focus() ;
+          document.createDiscountForm.end_date.focus() ;
+          return false;
+        }
+        return true;
+       }
+      function today() {
+        let d = new Date();
+        let currDate = d.getDate();
+        let currMonth = d.getMonth()+1;
+        let currYear = d.getFullYear();
+      return currYear + "-" + ((currMonth<10) ? '0'+currMonth : currMonth )+ "-" + ((currDate<10) ? '0'+currDate : currDate );
+      }
+    </script>
+{% endblock %}

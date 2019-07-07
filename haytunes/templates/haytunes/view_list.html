@@ -1,0 +1,83 @@
+{% extends 'base_generic.html' %}
+<header class="header-area">
+    {% block navbar %}
+        {% include 'base_nav.html' %}
+    {% endblock %}
+</header>
+{% block pagina_titulo %}
+    <h2>Ver Listado</h2>
+{% endblock %}
+{% block content %}
+    <div class="container">
+        <br>
+    {% if user.is_authenticated %}
+        <h2>{{ user.get_full_name }}</h2>
+    <div class="single-artists d-flex justify-content-center align-items-center wow fadeInUp mt-0 mb-15 m-auto" data-wow-delay="100ms">
+        <form action="" method="post">
+          {% csrf_token %}
+          <input type="submit" value="Ver Productos según Puntuación" name="product_ratings" class="btn oneMusic-btn mt-30">
+          <input type="submit" value="Ver Productos según Descargas" name="product_downloads" class="btn oneMusic-btn mt-30">
+          <input type="submit" value="Ver Clientes según Descargas" name="client_downloads" class="btn oneMusic-btn mt-30">
+    </form>
+    </div>
+
+    {% if product_ratings or product_downloads%}
+        <table class="table text-center">
+      <thead class="thead-dark">
+          <tr>
+              <th>Nombre</th>
+              <th>Puntuación</th>
+              <th>Número de Descargas</th>
+              <th>Precio</th>
+              <th>Categoría</th>
+          </tr>
+      </thead>
+      <tbody>
+              {% for product in product_ratings %}
+              <tr>
+                <td><a href="{{ product.get_absolute_url }}">{{ product.title}}</a></td>
+                <td>{{ product.rating }}</td>
+                <td>{{ product.downloads }}</td>
+                <td>{{ product.price }}</td>
+                <td>{{ product.category }}</td>
+              </tr>
+              {% endfor %}
+              {% for product in product_downloads %}
+              <tr>
+                <td><a href="{{ product.get_absolute_url }}">{{ product.title}}</a></td>
+                <td>{{ product.rating }}</td>
+                <td>{{ product.downloads }}</td>
+                <td>{{ product.price }}</td>
+                <td>{{ product.category }}</td>
+              </tr>
+              {% endfor %}
+      </tbody>
+      </table>
+      {% endif %}
+
+      {% if client_downloads %}
+        <table class="table text-center">
+      <thead class="thead-dark">
+          <tr>
+              <th>Código</th>
+              <th>Nombre</th>
+              <th>Número de Descargas</th>
+          </tr>
+      </thead>
+      <tbody>
+              {% for client in client_downloads %}
+              <tr>
+                <td>{{client.id}}</td>
+                <td><a href="{% url 'client-detail' id=client.id  %}">{{ client.user.username}}</a></td>
+                <td>{{ client.downloads }}</td>
+              </tr>
+              {% endfor %}
+      </tbody>
+      </table>
+      {% endif %}
+    {% else %}
+        <p>Please login to see this page.</p>
+    {% endif %}
+    
+</div>
+{% endblock %}

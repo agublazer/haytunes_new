@@ -1,0 +1,44 @@
+{% extends 'base_generic.html' %}
+<header class="header-area">
+    {% block navbar %}
+        {% include 'base_nav.html' %}
+    {% endblock %}
+</header>
+{% block pagina_titulo %}
+    <h2>Cargar Dinero</h2>
+{% endblock %}
+{% block content %}
+    <div class="container">
+        <br>
+    {% if user.is_authenticated %}
+
+    <div class="single-artists d-flex justify-content-center align-items-center wow fadeInUp mt-0 mb-15 m-auto" data-wow-delay="100ms">
+        <form action="" method="post">
+          {% if user_not_found %}
+      <p style="color:red;">No se encontró usuario alguno con ese código</p>
+      
+      {% endif %}
+
+
+      {% if success %}
+      <p style="color:green;">Dinero cargado exitosamente a <b>{{username}}</b></p>
+      
+      {% endif %}
+          Ingresa código del usuario:<br>
+          <input type="number" name="search_text"><br>
+          Selecciona cantidad:<br>
+          <input type="radio" name="amount" value=10 checked > S./ 10 <br>
+          <input type="radio" name="amount" value=50 > S./ 50 <br>
+          <input type="radio" name="amount" value=100 > S./ 100 <br>
+          {% csrf_token %}
+          <input type="submit" value="Añadir" class="btn oneMusic-btn mt-30">
+          </form>
+    </div>
+
+
+    {% else %}
+        <p>Please login to see this page.</p>
+    {% endif %}
+    
+</div>
+{% endblock %}

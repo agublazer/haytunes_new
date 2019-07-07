@@ -1,0 +1,166 @@
+{% extends 'base_generic.html' %}
+<header class="header-area">
+    {% block navbar %}
+        {% include 'base_nav.html' %}
+    {% endblock %}
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+</header>
+{% block pagina_titulo %}
+
+
+    <p>See what’s new</p>
+    <h2>Producto: {{ product.title }}</h2>
+    <br><br><br>
+    {% if already_bought %}
+      <p style="color:red;">Ya compraste este producto</p>
+      {% endif %}
+
+      {% if bought %}
+      <p style="color:green;">Contenido comprado</b></p>      
+      {% endif %}
+      {% if gift_sent %}
+      <p style="color:green;">Regalo enviado</b></p>      
+      {% endif %}
+
+      {% if not_money %}
+      <p style="color:red;">No cuentas con créditos suficientes para comprar este producto</b></p>
+      {% endif %}
+
+      {% if not_bought %}
+      <p style="color:red;">Primero tienes que comprar este producto</b></p>
+      {% endif %}
+      {% if same_user %}
+      <p style="color:red;">No te puedes enviar el regalo a ti mismo</b></p>
+      {% endif %}
+      {% if receiver_bought %}
+      <p style="color:red;">El destinatario ya tiene este producto</b></p>
+      {% endif %}
+      {% if not_receiver %}
+      <p style="color:red;">El destinatario no existe</b></p>
+      {% endif %}
+      {% if can_download == True %}
+      <p style="color:green;">Descargando</b></p>
+      {% endif %}
+      {% if can_download == False %}
+      <p style="color:red;">Primero tienes que comprar el producto</b></p>
+      {% endif %}
+
+
+{% endblock %}
+{% block content %}
+    <br>
+    <br>
+    <div class="container">
+    <table class="table text-center">
+      <thead class="thead-dark">
+          <tr>
+              <th>Titulo</th>
+              <th>Tipo</th>
+              <th>Categoría</th>
+              <th>Autor</th>
+              <th>Código</th>
+              <th>Propietario/s</th>
+              <th>Precio</th>
+              <th>Ver</th>
+              {% if perms.catalog.can_mark_returned %}
+                    <th>Editar</th>
+                    <th>Eliminar</th>
+              {% endif %}
+
+          </tr>
+      </thead>
+      <tbody>
+            <tr>
+                <td>{{ product.title }}</td>
+                <td>{{ product.get_type_display }}</td>
+                <td>{{ product.category }}</td>
+                <td>{{ product.author }}</td>
+                <td>{{ product.id }}</td>
+                <td>{% for owner in product.owner.all %} {{ owner }}{% if not forloop.last %}, {% endif %} {% endfor %}</td>
+                <td>{{ product.price }}</td>
+                <td><a href="/media/{{ product.content }}">Ver</a></td>
+                {% if perms.catalog.can_mark_returned %}
+                    <td><a href="{{ product.get_absolute_url }}/update">Editar</a></td>
+                    <td><a href="{{ product.get_absolute_url }}/delete">X</a></td>
+                {% endif %}
+              </tr>
+      </tbody>
+    </table>
+    <h3>Calificación:</h3> 
+    {% if already_rated %}
+    <p style="color:red;">Ya has calificado este producto</p>
+    {% endif %}
+    {% if cant_rate %}
+    <p style="color:red;">Debes comprar este producto para poder calificarlo</p>
+    {% endif %}
+    
+    {% if product.rating > 0 %}
+      {% for i in "x"|rjust:product.rating %}
+        <span style="color:orange; font-size:30px" class="fa fa-star checked"></span>
+      {% endfor %}
+     <br> 
+      Calificado por:
+      {% for rater in product.rated_by.all %}
+        {{rater}}, 
+      {% endfor %}
+    {% else %}
+       Este producto no ha sido calificado aún
+    {% endif %}
+
+    <div class="single-artists d-flex justify-content-center align-items-center wow fadeInUp mt-0 mb-15 m-auto" data-wow-delay="100ms">
+        <form action="" method="post">
+          <input type="submit" value="Descargar" name="download" class="btn oneMusic-btn mt-30">
+          <input type="submit" value="Comprar" name="buy" class="btn oneMusic-btn mt-30">
+          
+          {% csrf_token %}
+          </form>
+          <button name="gift" value="Regalar" onclick="openFormGift()" class="btn oneMusic-btn mt-30">Regalar</button>
+          <button name="rate" value="Calificar" onclick="openFormRating()" class="btn oneMusic-btn mt-30">Calificar</button>
+    </div>
+    <div class="form-popup" id="giftForm" style="display: none;text-align: center;">
+          <form action="" class="form-container" method="post">
+          <input type="text" placeholder="Ingresa nombre de usuario" name="destiny_username" required>
+
+            <input type="submit" class="btn" name="gift" value="Regalar">
+          <button type="button" class="btn cancel" onclick="closeFormGift()">Cerrar</button>
+          {% csrf_token %}
+          </form>
+          </div>
+    </div>
+    <div class="form-popup" id="ratingForm" style="display: none;text-align: center;">
+          <form action="" class="form-container" method="post">
+          <input type="number" name="rating" min="1" max="10" required="">
+          <input type="submit" class="btn" name="rate" value="Calificar">
+          <button type="button" class="btn cancel" onclick="closeFormRating()">Cerrar</button>
+          {% csrf_token %}
+          </form>
+          </div>
+    </div>
+
+
+
+    <script>
+    function openFormGift() {
+      document.getElementById("giftForm").style.display = "block";
+      var r_display = document.getElementById("ratingForm").style.display;
+      if (r_display == "block"){
+        document.getElementById("ratingForm").style.display = "none";
+      }
+    }
+
+    function closeFormGift() {
+      document.getElementById("giftForm").style.display = "none";
+    }
+    function openFormRating() {
+      document.getElementById("ratingForm").style.display = "block";
+      var r_display = document.getElementById("giftForm").style.display;
+      if (r_display == "block"){
+        document.getElementById("giftForm").style.display = "none";
+      }
+    }
+
+    function closeFormRating() {
+      document.getElementById("ratingForm").style.display = "none";
+    }
+</script>
+{% endblock %}
