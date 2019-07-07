@@ -14,12 +14,15 @@ from django.views.generic.edit import CreateView, DeleteView, UpdateView
 
 from haytunes.forms import SignUpForm, ProfileForm, UserForm
 from haytunes.models import Category, Product, Profile, Discount
+# from haytunes.tasks impor set_discount_as_active, set_discount_as_inactive
 from django.template import RequestContext
 from django.conf import settings
 from django.http import HttpResponse, Http404
 import re
 import os
 import datetime as dt
+
+from haytunes.celery import app
 
 
 def get_credit(request):
@@ -72,21 +75,26 @@ def add_credits(request):
 
 
 def create_discount(request):
+    context = {}
     if request.method == 'POST':
         category = request.POST.get("category")
-        existing_discount = Discount.objects.filter(active=True, product_category=category)
+        existing_discount = Discount.objects.filter(product_category=category)
+        existing_discount = [discount for discount in existing_discount if discount.is_active()]
         if not existing_discount:
             start_date = request.POST.get("start_date")
+            start_date = dt.datetime.strptime(start_date + ' 00:01', '%Y-%m-%d %H:%M')
             end_date = request.POST.get("end_date")
-            percentage = request.POST.get("percentage")
-            print("########################3")
-            print(start_date)
-            print(end_date)
-            print(percentage)
+            end_date = dt.datetime.strptime(end_date + ' 23:59', '%Y-%m-%d %H:%M')
+            percentage = int(request.POST.get("percentage"))
+            new_discount = Discount.create(category, percentage, start_date, end_date)
+            new_discount.save()
+        else:
+            context = {'already_discount': True}
 
-    active_discounts = Discount.objects.filter(active=True)
+    active_discounts = Discount.objects.filter()
     categories = Category.objects.filter()
-    context = {'active_discounts': active_discounts, 'categories': categories}
+    context['active_discounts'] = active_discounts
+    context['categories'] = categories
     return render(request, 'haytunes/create_discount.html', context)
 
 
@@ -206,6 +214,10 @@ class ProductDetailView(generic.DetailView):
     def get_context_data(self, **kwargs):
         context = super(ProductDetailView, self).get_context_data(**kwargs)
         context['msg'] = 'hola'
+        existing_discount = Discount.objects.filter(product_category=context['product'].category)
+        existing_discount = [discount for discount in existing_discount if discount.is_active()]
+        if existing_discount:
+            context['discount_percentage'] = existing_discount[0].percentage
         return context
 
     def post(self, request, *args, **kwargs):
@@ -214,6 +226,10 @@ class ProductDetailView(generic.DetailView):
         curr_user = Profile.objects.filter(user__username=request.user)
         curr_credit = curr_user[0].credit
         curr_product = Product.objects.filter(id=context['product'].id)
+        existing_discount = Discount.objects.filter(product_category=context['product'].category)
+        existing_discount = [discount for discount in existing_discount if discount.is_active()]
+        if existing_discount:
+            context['discount_percentage'] = existing_discount[0].percentage
 
         if request.POST.get("buy"):
             users_list = set(user.username for user in context['product'].owner.all())
@@ -221,11 +237,14 @@ class ProductDetailView(generic.DetailView):
                 context['already_bought'] = True
                 return self.render_to_response(context=context)
 
-            if context['product'].price <= curr_credit:
+            price = context['product'].price
+            if context['discount_percentage']:
+                price = price * context['discount_percentage']/100
+            if price <= curr_credit:
                 # check if user already has that product
 
                 context['bought'] = True
-                curr_credit -= context['product'].price
+                curr_credit -= price
                 curr_user.update(credit=curr_credit)
                 curr_product[0].owner.add(curr_user[0].user)
             else:
@@ -243,10 +262,14 @@ class ProductDetailView(generic.DetailView):
                 users_list = set(user.username for user in context['product'].owner.all())
                 if receiver[0].user.username in users_list:
                     context['receiver_bought'] = True
-                    # return self.render_to_response(context=context)
+                    return self.render_to_response(context=context)
 
-                if context['product'].price <= curr_credit:
-                    curr_credit -= context['product'].price
+                price = context['product'].price
+                if context['discount_percentage']:
+                    price = price * context['discount_percentage'] / 100
+
+                if price <= curr_credit:
+                    curr_credit -= price
                     curr_user.update(credit=curr_credit)
                     curr_product[0].owner.add(receiver[0].user)
                     context['gift_sent'] = True

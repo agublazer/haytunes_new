@@ -1,5 +1,6 @@
 import uuid
 import math
+import datetime
 
 from django.core.validators import MinValueValidator, RegexValidator
 from django.db import models
@@ -10,6 +11,7 @@ from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.urls import reverse
 from django.utils import timezone
+# from haytunes.tasks import set_discount_as_active, set_discount_as_inactive
 
 
 class Profile(models.Model):
@@ -54,6 +56,21 @@ class Discount(models.Model):
     start_date = models.DateTimeField(default=timezone.now)
     end_date = models.DateTimeField(default=timezone.now)
     active = models.BooleanField(default=False)
+    # temp = models.IntegerField(default=0)
+
+    @classmethod
+    def create(cls, p_c, c, s_d, e_d):
+        discount = cls(product_category=p_c, percentage=c, start_date=s_d, end_date=e_d)
+        # do something with the book
+        return discount
+
+    def is_active(self):
+        today = timezone.now()
+        if self.start_date < today and self.end_date > today:
+            print(self.start_date)
+            return True
+        else:
+            return False
 
 
 class Product(models.Model):

@@ -13,6 +13,9 @@
     {% if user.is_authenticated %}
     <div class="single-artists d-flex justify-content-center align-items-center wow fadeInUp mt-0 mb-15 m-auto" data-wow-delay="100ms">
         <form action="" method="post" onsubmit="return(validate())" name="createDiscountForm">
+          {% if already_discount %}
+          <p style="color:red;"> Esta categoría ya tiene un descuento</p><br>
+          {% endif %}
           Categoría:
           <select name="category">
           {% for category in categories%}
@@ -23,8 +26,9 @@
           Fecha de fin: <input type="date" name="end_date" required> <br>
           Porcentaje: <input type="number" name="percentage" min="10" max="90" step="5" value="20" required> <br>
           {% csrf_token %}
-          <input type="submit" value="Buscar" class="btn oneMusic-btn mt-30" name="create_discount">
+          <input type="submit" value="Crear" class="btn oneMusic-btn mt-30" name="create_discount">
     </form>
+
     </div>
         <table class="table text-center">
       <thead class="thead-dark">

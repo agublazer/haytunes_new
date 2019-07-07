@@ -106,6 +106,12 @@
     {% else %}
        Este producto no ha sido calificado aún
     {% endif %}
+    <h3>Descuento: </h3> 
+    {% if discount_percentage %}
+    <p style="color:green;">Este producto cuenta con un descuento del {{discount_percentage}}%</p>
+    {% else %}
+    <p> Este producto no cuenta con ningún descuento </p>
+    {% endif %}
 
     <div class="single-artists d-flex justify-content-center align-items-center wow fadeInUp mt-0 mb-15 m-auto" data-wow-delay="100ms">
         <form action="" method="post">
