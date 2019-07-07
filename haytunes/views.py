@@ -56,8 +56,8 @@ def profile(request):
 
 def add_credits(request):
     if request.method == 'POST':
-        user_id = re.search('search_text=(.*)&amount', str(request.body)).group(1)
-        amount = re.search('amount=(.*)&csrf', str(request.body)).group(1)
+        user_id = request.POST.get('search_text')
+        amount = int(request.POST.get('amount'))
         found_user = Profile.objects.filter(id=int(user_id))
         if found_user:
             # found_user = found_user[0]
@@ -109,7 +109,7 @@ def view_list(request):
 
 def search_client(request):
     if request.method == 'POST':
-        search_string = re.search('search_text=(.*)&search_type', str(request.body)).group(1)
+        search_string = request.POST.get('search_text')
         # search_string = result.group(1)
         searched_users = None
 
