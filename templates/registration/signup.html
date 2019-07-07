@@ -1,0 +1,104 @@
+{% extends 'base_generic.html' %}
+<header class="header-area">
+    {% block navbar %}
+        {% include 'base_nav.html' %}
+    {% endblock %}
+</header>
+{% block pagina_titulo %}
+    <p>See what’s new</p>
+    <h2>Register</h2>
+{% endblock %}
+{% block content %}
+    {% comment %}
+    <div class="signup-form">
+    {% if user.is_authenticated %}
+        Se encuentra logueado
+    {% else %}
+    <form method="post">
+        {% csrf_token %}
+		<h2>Create Account</h2>
+            {% load app_filters %}
+            {% for field in form %}
+                <div class="form-group">
+                    <div class="input-group">
+                        {% if field.html_name == 'username' %}
+                            <span class="input-group-addon"><i class="fa fa-user"></i></span>
+                            {{ field|addplaceholder:"Username" }}
+                        {% elif field.html_name == 'email'%}
+                            <span class="input-group-addon"><i class="fa fa-paper-plane"></i></span>
+                            {{ field|addplaceholder:"Email Adress" }}
+                        {% elif field.html_name == 'password1' %}
+                            <span class="input-group-addon"><i class="fa fa-lock"></i></span>
+                            {{ field|addplaceholder:"Password" }}
+                        {% else %}
+                            <span class="input-group-addon">
+					            <i class="fa fa-lock"></i>
+					            <i class="fa fa-check"></i>
+				            </span>
+                            {{ field|addplaceholder:"Confirm Password" }}
+                        {% endif %}
+
+                    </div>
+                </div>
+            {% endfor %}
+		    <div class="form-group">
+                <button type="submit">Sign up</button>
+            </div>
+		    <p class="small text-center">By clicking the Sign Up button, you agree to our <br><a href="#">Terms &amp; Conditions</a>, and <a href="#">Privacy Policy</a>.</p>
+    </form>
+	<div class="text-center">Already have an account? <a href="{% url 'login' %}">Login here</a>.</div>
+    {% endif %}
+    </div>
+    {% endcomment %}
+
+    <section class="login-area section-padding-100">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-12 col-lg-8">
+                    <div class="login-content">
+                        <h3>Create Account</h3>
+                        <!-- Login Form -->
+                        <div class="login-form">
+                            <form action="{% url 'signup' %}" method="post">
+                                {% csrf_token %}
+                                {% load app_filters %}
+                                {% for field in form %}
+                                    <div class="form-group">
+                                        {% if field.html_name == 'username' %}
+                                            <span class="text-danger small">{{ field.errors }}</span>
+                                            <span class="input-group-addon"><i class="fa fa-user"></i></span>
+                                            <label for="id_username">Username</label>
+                                            {{ field|addplaceholder:"Username" }}
+                                        {% elif field.html_name == 'email'%}
+                                            <span class="text-danger small">{{ field.errors }}</span>
+                                            <span class="input-group-addon"><i class="fa fa-paper-plane"></i></span>
+                                            <label for="id_email">Email</label>
+                                            {{ field|addplaceholder:"Email Adress" }}
+                                        {% elif field.html_name == 'password1' %}
+                                            <span class="text-danger small">{{ field.errors }}</span>
+                                            <span class="input-group-addon"><i class="fa fa-lock"></i></span>
+                                            <label for="id_password1">Password</label>
+                                            {{ field|addplaceholder:"Password" }}
+                                        {% else %}
+                                            <span class="text-danger small">{{ field.errors }}</span>
+                                            <span class="input-group-addon">
+					                        <i class="fa fa-lock"></i>
+					                        <i class="fa fa-check"></i>
+				                            </span>
+                                            <label for="id_password2">Confirm Password</label>
+                                            {{ field|addplaceholder:"Confirm Password" }}
+                                        {% endif %}
+                                    </div>
+                                {% endfor %}
+                                <button type="submit" class="btn oneMusic-btn mt-30">Register</button>
+                                <small id="registerHelp" class="form-text text-muted"><i class="fa fa-lock mr-2"></i>By
+                                    clicking the Sign Up button, you agree to our Terms &amp; Conditions and Privacy Policy.
+                                </small>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+{% endblock %}

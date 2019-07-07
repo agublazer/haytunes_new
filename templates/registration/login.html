@@ -1,0 +1,51 @@
+{% extends 'base_generic.html' %}
+<header class="header-area">
+    {% block navbar %}
+        {% include 'base_nav.html' %}
+    {% endblock %}
+</header>
+{% block pagina_titulo %}
+    <p>See what’s new</p>
+    <h2>Login</h2>
+{% endblock %}
+{% block content %}
+    <section class="login-area section-padding-100">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-12 col-lg-8">
+                    <div class="login-content">
+                        <h3>Welcome Back</h3>
+                        <!-- Login Form -->
+                        <div class="login-form">
+                            {% if form.errors %}
+                                <p>Your username or password didn't match. Please try again.</p>
+                            {% endif %}
+
+                            {% if next %}
+                                {% if user.is_authenticated %}
+                                    <p>Your account doesn't have access to this page. To proceed, please login with an account that has access.</p>
+                                {% else %}
+                                    <p>Please login to see this page.</p>
+                                {% endif %}
+                            {% endif %}
+                            <form action="{% url 'login' %}" method="post">
+                                {% csrf_token %}
+                                <div class="form-group">
+                                    {% load app_filters %}
+                                    <label for="id_username">Username</label>
+                                    {{ form.username|addplaceholder:"Username" }}
+                                </div>
+                                <div class="form-group">
+                                    <label for="id_password">Password</label>
+                                    {{ form.password|addplaceholder:"Password" }}
+                                </div>
+                                <button type="submit" class="btn oneMusic-btn mt-30">Login</button>
+                                <input type="hidden" value="{{ next }}">
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+{% endblock %}
