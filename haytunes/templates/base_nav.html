@@ -24,7 +24,9 @@
                             <!-- Nav Start -->
                             <div class="classynav">
                                 <ul>
+                                    {% if credits or credits == 0%}
                                     <li><a>Saldo: {{credits}}</a></li>
+                                    {% endif %}
                                     <li><a href="{% url 'index' %}">Home</a></li>
                                     <li><a href="{% url 'search_client' %}">Buscar Cliente</a></li>
                                     <li><a href="{% url 'products' %}">Buscar Producto</a></li>

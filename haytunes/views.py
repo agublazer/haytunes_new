@@ -18,15 +18,14 @@ from haytunes.models import Category, Product, Profile, Discount
 from django.template import RequestContext
 from django.conf import settings
 from django.http import HttpResponse, Http404
-import re
 import os
 import datetime as dt
-
-from haytunes.celery import app
 
 
 def get_credit(request):
     curr_user = Profile.objects.filter(user__username=request.user)
+    if not curr_user:
+        return {'credits': None}
     return {'credits': curr_user[0].credit}
 
 
@@ -242,7 +241,6 @@ class ProductDetailView(generic.DetailView):
                 price = price * context['discount_percentage']/100
             if price <= curr_credit:
                 # check if user already has that product
-
                 context['bought'] = True
                 curr_credit -= price
                 curr_user.update(credit=curr_credit)
