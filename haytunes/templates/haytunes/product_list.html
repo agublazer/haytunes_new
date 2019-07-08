@@ -18,6 +18,7 @@
 
 
     {% if perms.catalog.can_mark_returned %}
+    {% if user.is_authenticated %}
         <div class="single-artists d-flex justify-content-center align-items-center wow fadeInUp mt-0 mb-15 m-auto" data-wow-delay="100ms">
             <a href="{% url 'product_create' %}" class="btn oneMusic-btn mt-30">Ingresar Nuevo Producto</a>
             <a href="{% url 'categories' %}" class="btn oneMusic-btn mt-30">Ver todas las Categorías </a>
@@ -37,6 +38,7 @@
               <th>Titulo</th>
               <th>Tipo</th>
               <th>Categoría</th>
+              <th>Autor</th>
               <th>Código</th>
               <th>Ver</th>
               {% if perms.catalog.can_mark_returned %}
@@ -52,6 +54,7 @@
                 <td>{{ product.title }}</td>
                 <td>{{ product.get_type_display }}</td>
                 <td>{{ product.category }}</td>
+                <td>{{ product.author }}</td>
                 <td>{{ product.id }}</td>
                 <td><a href="{{ product.get_absolute_url }}">Click</a></td>
                  {% if perms.catalog.can_mark_returned %}
@@ -66,5 +69,9 @@
     <div class="single-artists d-flex justify-content-center align-items-center wow fadeInUp mt-0 mb-15 m-auto" data-wow-delay="100ms">
         <a href="{% url 'index' %}" class="btn oneMusic-btn mt-30">Regresar </a>
     </div>
+    {% else %}
+        <p>Please login to see this page.</p>
+    {% endif %}
 </div>
+
 {% endblock %}

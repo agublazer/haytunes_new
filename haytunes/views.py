@@ -100,16 +100,16 @@ def create_discount(request):
 def view_list(request):
     context = {}
     if request.POST.get("product_ratings"):
-        product_ratings = Product.objects.filter().order_by('-rating')
+        product_ratings = Product.objects.filter().order_by('-rating')[:10]
         context['product_ratings'] = product_ratings
 
     if request.POST.get("product_downloads"):
-        product_downloads = Product.objects.filter().order_by('-downloads')
+        product_downloads = Product.objects.filter().order_by('-downloads')[:10]
         context['product_downloads'] = product_downloads
 
     if request.POST.get("client_downloads"):
         client_downloads = Profile.objects.filter()
-        context['client_downloads'] = client_downloads.order_by('-downloads')
+        context['client_downloads'] = client_downloads.order_by('-downloads')[:10]
 
     return render(request, 'haytunes/view_list.html', context)
 
@@ -133,7 +133,8 @@ def search_client(request):
 def client_detail(request, id):
     # TODO: change to generic.DetailView
     profile = Profile.objects.filter(id=id)
-    return render(request, 'haytunes/profile_detail.html', {'profile': profile[0]})
+    owned_products = Product.objects.filter(owner=profile[0].user)
+    return render(request, 'haytunes/profile_detail.html', {'profile': profile[0], 'owned_products': owned_products})
 
 
 @login_required
@@ -141,20 +142,17 @@ def client_detail(request, id):
 def update_profile(request):
     if request.method == 'POST':
         user_form = UserForm(request.POST, instance=request.user)
-        #profile_form = ProfileForm(request.POST, instance=request.user.profile)
         if user_form.is_valid():
             user_form.save()
-            #profile_form.save()
             messages.success(request, _('Your profile was successfully updated!'))
             return redirect('profile')
         else:
             messages.error(request, _('Please correct the error below.'))
     else:
         user_form = UserForm(instance=request.user)
-        #profile_form = ProfileForm(instance=request.user.profile)
+
     return render(request, 'haytunes/update_profile.html', {
         'user_form': user_form,
-        #'profile_form': profile_form
     })
 
 
@@ -195,7 +193,8 @@ class ProductListView(generic.ListView):
         new_context = None
         if filter_val:
             new_context = Product.objects.filter(
-                Q(title__icontains=filter_val) | Q(category__name__icontains=filter_val)
+                Q(title__icontains=filter_val) | Q(category__name__icontains=filter_val) |
+                Q(author__icontains=filter_val) | Q(id__icontains=filter_val)
             )
         else:
             new_context = Product.objects.filter()
@@ -237,7 +236,7 @@ class ProductDetailView(generic.DetailView):
                 return self.render_to_response(context=context)
 
             price = context['product'].price
-            if context['discount_percentage']:
+            if 'discount_percentage' in context:
                 price = price * context['discount_percentage']/100
             if price <= curr_credit:
                 # check if user already has that product
@@ -263,7 +262,7 @@ class ProductDetailView(generic.DetailView):
                     return self.render_to_response(context=context)
 
                 price = context['product'].price
-                if context['discount_percentage']:
+                if 'discount_percentage' in context:
                     price = price * context['discount_percentage'] / 100
 
                 if price <= curr_credit:

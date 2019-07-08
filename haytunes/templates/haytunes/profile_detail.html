@@ -11,9 +11,6 @@
 {% block content %}
     <div class="container">
         <br>
-    <div class="single-artists d-flex justify-content-center align-items-center wow fadeInUp mt-0 mb-15 m-auto" data-wow-delay="100ms">
-        <a href="{% url 'product_create' %}" class="btn oneMusic-btn mt-30">Enviar Regalo</a>
-    </div>
   <table class="table text-center">
       <thead class="thead-dark">
           <tr>
@@ -25,7 +22,7 @@
           </tr>
       </thead>
       <tbody>
-          {% for product in category.product_set.all %}
+          {% for product in owned_products %}
               <tr>
                 <td>{{ product.title }}</td>
                 <td>{{ product.get_type_display }}</td>
